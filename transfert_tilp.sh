@@ -18,7 +18,7 @@ fi
 
 tilpcmd="${tilpcmd} --cable=DirectLink -ns"
 
-pushd $SCRIPT_DIR
+pushd "$SCRIPT_DIR"
 
 for i in $(seq -w 00 44); do
     if [ ! -f "app/AppIns${i}.8xv" ]; then
