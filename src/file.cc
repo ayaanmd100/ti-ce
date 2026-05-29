@@ -875,9 +875,18 @@ void tokenize(const char * s,vector<unsigned char> & v){
   const int l=strlen(s);
   if (l>4096)
     return;
-  unsigned char buf[l+l/2]; // take additional room for / translated to 2 bytes
+  int extra=0;
+  for (const char * ptr=s;*ptr;++ptr){
+    if (*ptr=='/')
+      ++extra;
+  }
+  if (l+extra>0xffff)
+    return;
+  unsigned char buf[2+l+extra]; // header + room for / translated to 2 bytes
   unsigned char * ptr=buf+2;
   const int tsize=in_tokenize(s,ptr);
+  if (tsize<=0 || tsize>l+extra)
+    return;
   buf[0]=tsize%256;
   buf[1]=tsize/256;
   vector<unsigned char> V(buf,buf+tsize+2);
