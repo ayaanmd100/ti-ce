@@ -282,10 +282,16 @@ int get_filename(char * filename,const char * extension){
   const int res=inputline((lang==1)?"EXIT ou chaine vide: annulation":"EXIT or empty string: cancel",(lang==1)?"Nom de fichier:":"Filename:",str,false);
   if (res==KEY_CTRL_EXIT || str.empty())
     return 0;
+  if (extension && *extension){
+    const size_t ext_len=strlen(extension);
+    if (str.size()<ext_len || memcmp(str.c_str()+str.size()-ext_len,extension,ext_len))
+      str += extension;
+  }
+  if (str.size()>MAX_FILENAME_SIZE){
+    statuslinemsg(lang?"Nom trop long":"Filename too long",COLOR_RED);
+    return 0;
+  }
   strcpy(filename,str.c_str());
-  const int s=strlen(filename);
-  if (strcmp(filename+s-3,extension))
-    strcpy(filename+s,extension);
   // if file already exists, warn, otherwise create
   if (!file_exists(filename))
     return 1;
